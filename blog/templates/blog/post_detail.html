@@ -1,0 +1,31 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+    <div class="post">
+        {% if post.published_date %}
+            <div class="date">
+                {{ post.published_date }}
+            </div>
+        {% endif %}
+
+        {% if user.is_authenticated and user.username|slugify == post.author|slugify %}
+            <a class="btn btn-default" href="{% url 'post_edit' pk=post.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+        {% endif %}
+        <h2>{{ post.title }}</h2>
+        <p>{{ post.text|linebreaksbr }}</p>
+        <h1>New comment</h1>
+        <form method="POST" class="post-form">{% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="save btn btn-default">Send</button>
+        </form>
+    </div>
+        {% if user.is_authenticated %}
+            <label for="comment">Your Commment: </label>
+            <form action="{% url 'post_detail' pk=post.pk %}" method="POST">{% csrf_token %}
+                <input id="comment" type="text" name="comment">
+                {{ form.as_p }}
+                <input type="submit" value="Post">
+
+            </form>
+        {% endif %}
+{% endblock %}
